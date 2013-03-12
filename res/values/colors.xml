@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="odd_item_color">#FF333333</color>
+    <color name="even_item_color">#FF000000</color>
+    <color name="red">#FFFF0000</color>
+    <color name="zhuangjia">#FFFF8800</color>
+</resources>

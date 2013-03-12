@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, JiFenQiActivity!</string>
+    <string name="app_name">字牌记分器</string> 
+    <string name="app_choose_seat_name">选择座位</string>
+
+    <string name="player_number">玩家人数：</string>
+    <string name="player1">玩家1：</string>
+    <string name="player2">玩家2：</string>
+    <string name="player3">玩家3：</string>
+    <string name="player4">玩家4：</string>
+    <string name="zhuangjia">庄家：</string>
+    <string name="start_zhuangjia">开局庄家：</string>
+    <string name="shangxiaxing">上下醒</string>
+    <string name="start_game">开始</string>
+    <string name="cannot_start">不能开始</string>
+    <string name="record_point">记分</string>
+    <string name="huzishu">胡子：</string>
+    <string name="xing">醒：</string>
+    <string name="shangxing">上醒：</string>
+    <string name="xiaxing">下醒：</string>
+    <string name="zimo">自摸</string>
+    <string name="huangzhuang">黄庄</string>
+    <string name="fangpao_player">放炮玩家：</string>
+    <string name="newgame_continue">继续新开一局</string>
+    <string name="newgame_message">是否继续新开一局？</string>
+    <string name="delete_round">删除</string>
+    <string name="discard_game">放弃这局</string>
+    <string name="about">关于</string>
+    <string name="hupai_player">胡牌玩家：</string>
+    <string name="finish_game_title">结束一局</string>
+    <string name="finish_game_message">确认结束吗？</string>
+    <string name="discard_game_message">确认放弃吗？</string>
+    <string name="ok">确认</string>
+    <string name="rechoose_seat">重选</string>
+    <string name="wrong_digit_title">数字错误</string>
+    <string name="wrong_digit_message">请输入正确数字</string>
+    <string name="change_player_name_title">修改玩家名</string>
+    <string name="wrong_remain_points">计算出错！请自行修正</string>
+    <string name="spinner_choose_player_number">选择玩家数</string>
+    <string name="spinner_choose_zhuangjia">选择庄家</string>
+    <string name="chahuzi">茬胡子</string>
+    <string name="hint_start_point">开始分数</string>
+    <string name="delete_select">删除</string>
+    <string name="no_history">没有历史记录</string>
+    <string name="history">历史记录</string>
+    <string name="error_history">错误历史记录</string>
+    <string name="batch_delete">批量删除</string>
+    <string name="deleting">正在删除</string>
+    <string name="loading">正在打开</string>
+    <string name="error_load">无法打开文件</string>
+    <string name="resume_game_title">继续上一局</string>
+    <string name="resume_game_message">是否继续上一局？</string>
+    <string name="edit">编辑</string>
+</resources>

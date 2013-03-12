@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="seat_dimen">60dp</dimen>
+    <dimen name="table_dimen">100dp</dimen>
+    <dimen name="seat_margin">20dp</dimen>
+</resources>

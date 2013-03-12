@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="40dp">
+        <TextView 
+            android:id="@+id/start_points"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/map_btn_capture_cancel"/>
+        <View 
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/vertical_divider_1"/>
+        <TextView
+            android:id="@+id/player1_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/item_bg_2"
+             />
+        <View 
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/vertical_divider_1"/>
+        <TextView
+            android:id="@+id/player2_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/item_bg_2"
+             />
+        <View 
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/vertical_divider_1"/>
+        <TextView
+            android:id="@+id/player3_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/item_bg_2"
+             />
+        <View 
+            android:id="@+id/player4_name_div"
+            android:layout_width="2dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/vertical_divider_1"/>
+        <TextView
+            android:id="@+id/player4_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/item_bg_2"
+             />
+    </LinearLayout>
+    
+    <View 
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/horizontal_divider"/>
+    
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    
+</LinearLayout>
