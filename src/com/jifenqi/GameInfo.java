@@ -113,16 +113,7 @@ public class GameInfo {
         ri.zimo = isZimo;
         ri.fangpaoPlayerId = fangpaoPlayer;
         
-        mRoundInfos.add(ri);
-        int round = mPointsCache.size();
-        int[] lastRoundPoints;
-        if(round != 0) {
-            lastRoundPoints = mPointsCache.get(round - 1);
-        } else {
-            lastRoundPoints = mStartPoints;
-        }
-        int[] newRoundPoints = calcPoints(lastRoundPoints, ri);
-        mPointsCache.add(newRoundPoints);
+        addRoundResult(ri);
     }
     
     public void deleteRound(int position) {

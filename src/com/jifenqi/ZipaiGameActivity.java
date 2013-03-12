@@ -346,23 +346,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 }
             });
             mRecordRoundView = view;
-            return new AlertDialog.Builder(this)
-                    .setTitle(R.string.record_point)
-                    .setView(view)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            AlertDialog ad = (AlertDialog)dialog;
-                            //doRecordRound(ad);
-                        }
-
-                        
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            
-                        }
-                    })
-                    .create();
+            return dialog;
         case PROGRESS_LOAD_ID:
             ProgressDialog deleteDialog = new ProgressDialog(this);
             deleteDialog.setMessage(getResources().getText(R.string.loading));
