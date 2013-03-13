@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -336,10 +337,11 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             CharSequence text = getResources().getText(android.R.string.ok);
             dialog.setButton(AlertDialog.BUTTON_POSITIVE, text, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    AlertDialog ad = (AlertDialog)dialog;
-                    //doRecordRound(ad);
+                    RecordRoundDialog ad = (RecordRoundDialog)dialog;
+                    doRecordRound(ad);
                 }
             });
+            text = getResources().getText(android.R.string.cancel);
             dialog.setButton(AlertDialog.BUTTON_NEGATIVE, text, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     
@@ -451,19 +453,53 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
     
     private void prepareRecordRoundDialog(Dialog dialog, Bundle args) {
-        //TODO: The states are wrong, so don't use it.
-        int hupaiPlayerId = args.getInt(Const.EXTRA_HUPAIPLAYER_ID);
+        RecordRoundDialog rDialog = (RecordRoundDialog) dialog;
+        RoundInfo ri = null;
+        int type = args.getInt(Const.EXTRA_ROUND_DIALOG_TYPE);
+        if(type == Const.ROUND_DIALOG_TYPE_NEW) {
+            int hupaiPlayerId = args.getInt(Const.EXTRA_HUPAIPLAYER_ID, -1);
+            ri = new RoundInfo();
+            int zhuangjiaId = mGameInfo.getLastZhuangjiaId();
+            ri.zhuangjiaId = zhuangjiaId;
+            ri.hupaiPlayerId = hupaiPlayerId;
+            
+            rDialog.mHupaiPlayerId = hupaiPlayerId;
+        } else if(type == Const.ROUND_DIALOG_TYPE_UPDATE) {
+            int roundId = args.getInt(Const.EXTRA_ROUND_ID, -1);
+            ri = mGameInfo.mRoundInfos.get(roundId);
+            
+            rDialog.mRoundId = roundId;
+        }
+        rDialog.mType = type;
+        
+        initRoundDialog(dialog, type, ri);
+    }
+    
+    private void initRoundDialog(Dialog dialog, int type, RoundInfo ri) {
         View view = dialog.findViewById(R.id.record_round_layout);
-        view.setTag(hupaiPlayerId);
+        EditText huziView = (EditText)dialog.findViewById(R.id.huzishu);
+        EditText shangxingView = (EditText)dialog.findViewById(R.id.shangxing);
+        View xiaxingLayout = dialog.findViewById(R.id.xiaxing_layout);
+        EditText xiaxingView = (EditText)dialog.findViewById(R.id.xiaxing);
+        CheckBox zimoCheckBox = (CheckBox)dialog.findViewById(R.id.zimo);
+        CheckBox huangzhuangCheckBox = (CheckBox)dialog.findViewById(R.id.huangzhuang);
+        Spinner fangpaoSpinner = (Spinner)dialog.findViewById(R.id.fangpao_player_spinner);
+        
+        //Clear
+        huziView.setText("");
+        shangxingView.setText("");
+        xiaxingView.setText("");
+        zimoCheckBox.setChecked(false);
+        huangzhuangCheckBox.setChecked(false);
         if(mGameInfo.mPlayerNumber == 3) {
             if(!mGameInfo.mHasShangxiaxing) {
-                view.findViewById(R.id.xiaxing_layout).setVisibility(View.GONE);
+                xiaxingLayout.setVisibility(View.GONE);
                 TextView tv = (TextView)view.findViewById(R.id.shangxing_name);
                 tv.setText(R.string.xing);
             }
         }
-        CheckBox cb = (CheckBox)view.findViewById(R.id.zimo);
-        cb.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+        
+        huangzhuangCheckBox.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                     boolean isChecked) {
@@ -475,23 +511,27 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             }
         });
         
-        Spinner sp = (Spinner)view.findViewById(R.id.fangpao_player_spinner);
         ArrayList<FangPaoPair> items = new ArrayList<FangPaoPair>();
         items.add(new FangPaoPair("нч", -1));
-        int zhuangjiaId = mGameInfo.getLastZhuangjiaId();
+        int zhuangjiaId = ri.zhuangjiaId;
         int shuxingPlayerId = Utils.getShuxingPlayer(zhuangjiaId);
+        int faopaoPlayerPos = 0;
         for(int i = 0; i < mGameInfo.mPlayerNumber; i++) {
-            if(hupaiPlayerId == i
+            if(ri.hupaiPlayerId == i
                     || (mGameInfo.mPlayerNumber == 4 && shuxingPlayerId == i)) {
                 continue;
             }
             FangPaoPair fp = new FangPaoPair(mGameInfo.mPlayerNames[i].toString(), i);
             items.add(fp);
+            if(ri.fangpaoPlayerId == i) {
+                faopaoPlayerPos = i + 1; //Start from the second position
+            }
         }
         ArrayAdapter<FangPaoPair > adapter = new ArrayAdapter<FangPaoPair>(this,
                 android.R.layout.simple_spinner_item, items);
-        sp.setAdapter(adapter);
-        sp.setOnItemSelectedListener(new OnItemSelectedListener() {
+        fangpaoSpinner.setAdapter(adapter);
+        fangpaoSpinner.setSelection(faopaoPlayerPos);
+        fangpaoSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(
                     AdapterView<?> parent, View view, int position, long id) {
                 FangPaoPair pair = (FangPaoPair)parent.getItemAtPosition(position);
@@ -507,6 +547,23 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        
+        if(type == Const.ROUND_DIALOG_TYPE_UPDATE) {
+            huziView.setText(Integer.toString(ri.huzishu));
+            if(ri.shangxing != 0) {
+                shangxingView.setText(Integer.toString(ri.shangxing));
+            }
+            if(ri.xiaxing != 0) {
+                xiaxingView.setText(Integer.toString(ri.xiaxing));
+            }
+            if(ri.huzishu != 0) {
+                huziView.setText(Integer.toString(ri.huzishu));
+            }
+            zimoCheckBox.setChecked(ri.zimo);
+            huangzhuangCheckBox.setChecked(ri.hupaiPlayerId == 0 ? true : false);
+        } else {
+            
+        }
     }
     
     @Override
@@ -664,10 +721,11 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             }
             
             int hupaiPlayerId = getPlayerId(id);
-//            Bundle args = new Bundle();
-//            args.putInt(Const.EXTRA_HUPAIPLAYER_ID, hupaiPlayerId);
-//            showDialog(RECORDROUNDDIALOG_ID, args);
-            showRoundDialog(hupaiPlayerId);
+            Bundle args = new Bundle();
+            args.putInt(Const.EXTRA_ROUND_DIALOG_TYPE, Const.ROUND_DIALOG_TYPE_NEW);
+            args.putInt(Const.EXTRA_HUPAIPLAYER_ID, hupaiPlayerId);
+            showDialog(RECORDROUNDDIALOG_ID, args);
+//            showRoundDialog(hupaiPlayerId);
             break;
         case R.id.start_points:
             showDialog(STARTPOINTS_ID);
@@ -824,9 +882,24 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     private void recordRound(int zhuangjiaId, int hupaiPlayerId, int huzi, int shangxing, int xiaxing, boolean isZimo, int fangpaoPlayer) {
         mGameInfo.addRoundResult(zhuangjiaId, hupaiPlayerId, huzi, shangxing, xiaxing, isZimo, fangpaoPlayer);
+
+        updatePlayersView();
+        refreshRoundList();
+    }
+    
+    private void recordRound(RoundInfo ri) {
+        mGameInfo.addRoundResult(ri);
         
         updatePlayersView();
         refreshRoundList();
+    }
+    
+    private void updateRound(int roundId, RoundInfo ri) {
+        mGameInfo.updateRound(roundId, ri);
+        
+        updatePlayersView();
+        refreshRoundList();
+        updateDetailView(roundId);
     }
     
     private int getPlayerId(int viewId) {
@@ -848,6 +921,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         BaseAdapter adapter = (BaseAdapter) mRoundList.getAdapter();
         adapter.notifyDataSetChanged();
         mRoundList.invalidate();
+    }
+    
+    private void updateDetailView(int position) {
+        View view = mRoundList.getChildAt(position);
+        View detailView = view.findViewById(R.id.round_detail_layout);
+        updateRoundDetail(position, detailView);
     }
     
     private void saveLastGame() {
@@ -911,7 +990,10 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
     
     private void editRound(int position) {
-        showDialog(EDIT_ROUND_ID);
+        Bundle args = new Bundle();
+        args.putInt(Const.EXTRA_ROUND_DIALOG_TYPE, Const.ROUND_DIALOG_TYPE_UPDATE);
+        args.putInt(Const.EXTRA_ROUND_ID, position);
+        showDialog(RECORDROUNDDIALOG_ID, args);
     }
 
     @Override
@@ -920,56 +1002,59 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         if(detailView.getVisibility() == View.VISIBLE) {
             detailView.setVisibility(View.GONE);
         } else {
-            //TODO: improve the UI
             detailView.setVisibility(View.VISIBLE);
-            RoundInfo ri = mGameInfo.mRoundInfos.get(position);
-            TextView tv = (TextView)detailView.findViewById(R.id.zhuangjia_name);
-            tv.setText(mGameInfo.mPlayerNames[ri.zhuangjiaId]);
+            updateRoundDetail(position, detailView);
+        }
+    }
+
+    private void updateRoundDetail(int position, View detailView) {
+        RoundInfo ri = mGameInfo.mRoundInfos.get(position);
+        TextView tv = (TextView)detailView.findViewById(R.id.zhuangjia_name);
+        tv.setText(mGameInfo.mPlayerNames[ri.zhuangjiaId]);
+        
+        tv = (TextView)detailView.findViewById(R.id.hupai_player_name);
+        if(ri.hupaiPlayerId != -1) {
+            tv.setText(mGameInfo.mPlayerNames[ri.hupaiPlayerId]);
+        } else {
+            tv.setText("нч");
+        }
+        tv = (TextView)detailView.findViewById(R.id.huzishu);
+        tv.setText(Integer.toString(ri.huzishu));
+        
+        tv = (TextView)detailView.findViewById(R.id.shangxing);
+        tv.setText(Integer.toString(ri.shangxing));
+        if(!mGameInfo.mHasShangxiaxing) {
+            tv = (TextView)detailView.findViewById(R.id.shangxing_title);
+            tv.setText(R.string.xing);
+        }
+        
+        View xiaxingLayout = detailView.findViewById(R.id.xiaxing_layout);
+        if(mGameInfo.mHasShangxiaxing) {
+            xiaxingLayout.setVisibility(View.VISIBLE);
+            tv = (TextView)detailView.findViewById(R.id.xiaxing);
+            tv.setText(Integer.toString(ri.xiaxing));
+        } else {
+            xiaxingLayout.setVisibility(View.GONE);
+        }
+        
+        tv = (TextView)detailView.findViewById(R.id.zimo);
+        if(ri.zimo) {
+            tv.setVisibility(View.VISIBLE);
+            tv.setText(R.string.zimo);
+        } else if(ri.hupaiPlayerId < 0){
+            tv.setVisibility(View.VISIBLE);
+            tv.setText(R.string.huangzhuang);
+        } else if(ri.huzishu < 0){
+            tv.setVisibility(View.VISIBLE);
+            tv.setText(R.string.chahuzi);
+        } else {
+            tv.setVisibility(View.GONE);
+        }
+        if(ri.fangpaoPlayerId != -1) {
+            tv = (TextView)detailView.findViewById(R.id.fangpao_player);
+            tv.setText(mGameInfo.mPlayerNames[ri.fangpaoPlayerId]);
+        } else {
             
-            tv = (TextView)detailView.findViewById(R.id.hupai_player_name);
-            if(ri.hupaiPlayerId != -1) {
-                tv.setText(mGameInfo.mPlayerNames[ri.hupaiPlayerId]);
-            } else {
-                tv.setText("нч");
-            }
-            tv = (TextView)detailView.findViewById(R.id.huzishu);
-            tv.setText(Integer.toString(ri.huzishu));
-            
-            tv = (TextView)detailView.findViewById(R.id.shangxing);
-            tv.setText(Integer.toString(ri.shangxing));
-            if(!mGameInfo.mHasShangxiaxing) {
-                tv = (TextView)detailView.findViewById(R.id.shangxing_title);
-                tv.setText(R.string.xing);
-            }
-            
-            View xiaxingLayout = detailView.findViewById(R.id.xiaxing_layout);
-            if(mGameInfo.mHasShangxiaxing) {
-                xiaxingLayout.setVisibility(View.VISIBLE);
-                tv = (TextView)detailView.findViewById(R.id.xiaxing);
-                tv.setText(Integer.toString(ri.xiaxing));
-            } else {
-                xiaxingLayout.setVisibility(View.GONE);
-            }
-            
-            tv = (TextView)detailView.findViewById(R.id.zimo);
-            if(ri.zimo) {
-                tv.setVisibility(View.VISIBLE);
-                tv.setText(R.string.zimo);
-            } else if(ri.hupaiPlayerId < 0){
-                tv.setVisibility(View.VISIBLE);
-                tv.setText(R.string.huangzhuang);
-            } else if(ri.huzishu < 0){
-                tv.setVisibility(View.VISIBLE);
-                tv.setText(R.string.chahuzi);
-            } else {
-                tv.setVisibility(View.GONE);
-            }
-            if(ri.fangpaoPlayerId != -1) {
-                tv = (TextView)detailView.findViewById(R.id.fangpao_player);
-                tv.setText(mGameInfo.mPlayerNames[ri.fangpaoPlayerId]);
-            } else {
-                
-            }
         }
     }
 
@@ -999,10 +1084,10 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         intent.putExtra(Const.EXTRA_SHANGXIAXING, gi.mHasShangxiaxing);
     }
     
-    private void doRecordRound(AlertDialog dialog) {
+    private void doRecordRound(RecordRoundDialog dialog) {
         try {
             View view = dialog.findViewById(R.id.record_round_layout);
-            int hupaiPlayerId = (Integer)view.getTag();
+            
             TextView huziView = (TextView)dialog.findViewById(R.id.huzishu);
             CharSequence huziString = huziView.getText();
             int huzi = 0;
@@ -1028,7 +1113,20 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             FangPaoPair pair = (FangPaoPair)sp.getSelectedItem();
             fangpaoPlayer = pair.playerId;
             cb = (CheckBox)dialog.findViewById(R.id.huangzhuang);
-            int theHupaiPlayerId = hupaiPlayerId;
+            
+            int type = dialog.mType;
+            RoundInfo ri = null;
+            int theHupaiPlayerId;
+            int zhuangjiaId;
+            if(type == Const.ROUND_DIALOG_TYPE_NEW) {
+                ri = new RoundInfo();
+                theHupaiPlayerId = dialog.mHupaiPlayerId;
+                zhuangjiaId = mGameInfo.getLastZhuangjiaId();
+            } else {
+                ri = mGameInfo.mRoundInfos.get(dialog.mRoundId);
+                theHupaiPlayerId = ri.hupaiPlayerId;
+                zhuangjiaId = ri.zhuangjiaId;
+            }
             if(cb.isChecked()) {
                 theHupaiPlayerId = -1;
                 huzi = 0;
@@ -1044,8 +1142,21 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 isZimo = false;
                 fangpaoPlayer = -1;
             }
-            int zhuangjiaId = mGameInfo.getLastZhuangjiaId();
-            recordRound(zhuangjiaId, theHupaiPlayerId, huzi, shangxing, xiaxing, isZimo, fangpaoPlayer);
+            
+            ri.zhuangjiaId = zhuangjiaId;
+            ri.hupaiPlayerId = theHupaiPlayerId;
+            ri.huzishu = huzi;
+            ri.shangxing = shangxing;
+            ri.xiaxing = xiaxing;
+            ri.zimo = isZimo;
+            ri.fangpaoPlayerId = fangpaoPlayer;
+            
+            if(type == Const.ROUND_DIALOG_TYPE_NEW) {
+                recordRound(ri);
+            } else if(type == Const.ROUND_DIALOG_TYPE_UPDATE){
+                updateRound(dialog.mRoundId, ri);
+            }
+//            recordRound(zhuangjiaId, theHupaiPlayerId, huzi, shangxing, xiaxing, isZimo, fangpaoPlayer);
         } catch(NumberFormatException e) {
             showDialog(ERRORNUMBER_ID);
         }

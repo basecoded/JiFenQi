@@ -5,18 +5,12 @@ import android.content.Context;
 
 public class RecordRoundDialog extends AlertDialog{
     
-    private int mPlayerId;
+    public int mType;
+    public int mRoundId;
+    public int mHupaiPlayerId;
 
     protected RecordRoundDialog(Context context) {
         super(context);
-    }
-    
-    public void setPlayerId(int id) {
-        mPlayerId = id;
-    }
-    
-    public int getPlayerId() {
-        return mPlayerId;
     }
 
 }

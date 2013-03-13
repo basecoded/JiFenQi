@@ -116,6 +116,11 @@ public class GameInfo {
         addRoundResult(ri);
     }
     
+    public void updateRound(int roundId, RoundInfo ri) {
+        mRoundInfos.set(roundId, ri);
+        refreshPointsCache(roundId - 1);
+    }
+    
     public void deleteRound(int position) {
         mRoundInfos.remove(position);
         refreshPointsCache(position);
@@ -241,5 +246,11 @@ public class GameInfo {
         public boolean zimo;
         @Attribute
         public int fangpaoPlayerId;
+        
+        public RoundInfo() {
+            zhuangjiaId = -1;
+            hupaiPlayerId = -1;
+            fangpaoPlayerId = -1;
+        }
     }
 }

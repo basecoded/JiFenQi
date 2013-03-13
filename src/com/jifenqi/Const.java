@@ -11,6 +11,8 @@ public class Const {
     public static final String EXTRA_HISTORY = "history";
     public static final String EXTRA_HISTORY_FILENAME = "history_filename";
     public static final String EXTRA_RESUME_GAME = "resume_game";
+    public static final String EXTRA_ROUND_ID = "round_id";
+    public static final String EXTRA_ROUND_DIALOG_TYPE = "round_dialog_type";
     
     public static final String ARG_ERROR_MESSAGE = "arg_error";
     
@@ -23,4 +25,7 @@ public class Const {
     
     public static final String PREF_NAME = "jifenqi_zipai";
     public static final String KEY_RESUME = "zipai_resume";
+    
+    public static final int ROUND_DIALOG_TYPE_NEW = 1;
+    public static final int ROUND_DIALOG_TYPE_UPDATE = 2;
 }
