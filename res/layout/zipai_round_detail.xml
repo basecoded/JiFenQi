@@ -3,12 +3,21 @@
     android:id="@+id/round_detail_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:visibility="gone"
      >
-    <include layout="@layout/zipai_round_detail_1"
-        android:layout_weight="1"/>
+     
+    <include layout="@layout/horizontal_divider"/>
     
-    <include layout="@layout/zipai_round_detail_2"
-        android:layout_weight="1"/>
+    <LinearLayout 
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+            >
+        <include layout="@layout/zipai_round_detail_1"
+            android:layout_weight="1"/>
+        
+        <include layout="@layout/zipai_round_detail_2"
+            android:layout_weight="1"/>
+    </LinearLayout>
 </LinearLayout>

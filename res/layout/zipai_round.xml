@@ -7,8 +7,5 @@
 
     <include layout="@layout/zipai_round_result"/>
     <include layout="@layout/zipai_round_detail"/>
-    <View 
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@drawable/horizontal_divider"/>
+    <include layout="@layout/horizontal_divider"/>
 </LinearLayout>

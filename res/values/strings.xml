@@ -53,4 +53,6 @@
     <string name="resume_game_title">继续上一局</string>
     <string name="resume_game_message">是否继续上一局？</string>
     <string name="edit">编辑</string>
+    <string name="mail_text">电子邮箱：</string>
+    <string name="my_mail">idleray@gmail.com</string>
 </resources>

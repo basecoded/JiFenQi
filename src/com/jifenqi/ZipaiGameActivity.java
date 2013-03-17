@@ -978,7 +978,9 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
     
     private void showAbout() {
-        
+        Intent intent = new Intent();
+        intent.setClass(this, AboutActivity.class);
+        startActivity(intent);
     }
     
     private void deleteRound(int position) {
