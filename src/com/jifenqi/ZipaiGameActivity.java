@@ -100,7 +100,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         
         @Override
         public int getCount() {
-            return mGameInfo.mRoundInfos.size();
+            //The first item is the start points.
+            return mGameInfo.mPointsCache.size();
         }
 
         @Override
@@ -123,7 +124,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             }
             
             TextView tv = (TextView)view.findViewById(R.id.round);
-            tv.setText(Integer.toString(position + 1));
+            tv.setText(Integer.toString(position));
             int[] points = mGameInfo.mPointsCache.get(position);
             tv = (TextView)view.findViewById(R.id.player1_point);
             tv.setText(Integer.toString(points[0]));
@@ -591,6 +592,10 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
+        if(info.position == 0) {
+            return;
+        }
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.zipai_context_menu, menu);
@@ -653,10 +658,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 }
             }
             
+            int[] ps = new int[mGameInfo.mPlayerNumber];
+            System.arraycopy(startPoints, 0, ps, 0, ps.length);
+            mGameInfo.initPoints(ps);
+            
             initView();
         }
-        
-        
     }
     
     private void initView() {
@@ -1010,53 +1017,69 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
 
     private void updateRoundDetail(int position, View detailView) {
+        TextView tv;
         RoundInfo ri = mGameInfo.mRoundInfos.get(position);
-        TextView tv = (TextView)detailView.findViewById(R.id.zhuangjia_name);
+        tv = (TextView)detailView.findViewById(R.id.zhuangjia_name);
         tv.setText(mGameInfo.mPlayerNames[ri.zhuangjiaId]);
         
-        tv = (TextView)detailView.findViewById(R.id.hupai_player_name);
-        if(ri.hupaiPlayerId != -1) {
-            tv.setText(mGameInfo.mPlayerNames[ri.hupaiPlayerId]);
-        } else {
-            tv.setText("нч");
-        }
-        tv = (TextView)detailView.findViewById(R.id.huzishu);
-        tv.setText(Integer.toString(ri.huzishu));
-        
-        tv = (TextView)detailView.findViewById(R.id.shangxing);
-        tv.setText(Integer.toString(ri.shangxing));
-        if(!mGameInfo.mHasShangxiaxing) {
-            tv = (TextView)detailView.findViewById(R.id.shangxing_title);
-            tv.setText(R.string.xing);
-        }
-        
-        View xiaxingLayout = detailView.findViewById(R.id.xiaxing_layout);
-        if(mGameInfo.mHasShangxiaxing) {
-            xiaxingLayout.setVisibility(View.VISIBLE);
-            tv = (TextView)detailView.findViewById(R.id.xiaxing);
-            tv.setText(Integer.toString(ri.xiaxing));
-        } else {
-            xiaxingLayout.setVisibility(View.GONE);
-        }
-        
-        tv = (TextView)detailView.findViewById(R.id.zimo);
-        if(ri.zimo) {
-            tv.setVisibility(View.VISIBLE);
-            tv.setText(R.string.zimo);
-        } else if(ri.hupaiPlayerId < 0){
-            tv.setVisibility(View.VISIBLE);
-            tv.setText(R.string.huangzhuang);
-        } else if(ri.huzishu < 0){
-            tv.setVisibility(View.VISIBLE);
-            tv.setText(R.string.chahuzi);
-        } else {
+        if(position == 0) {
+            View xiaxingLayout = detailView.findViewById(R.id.xiaxing_layout);
+            if(mGameInfo.mHasShangxiaxing) {
+                xiaxingLayout.setVisibility(View.VISIBLE);
+                tv = (TextView)detailView.findViewById(R.id.xiaxing);
+            } else {
+                xiaxingLayout.setVisibility(View.GONE);
+            }
+            
+            tv = (TextView)detailView.findViewById(R.id.zimo);
             tv.setVisibility(View.GONE);
-        }
-        if(ri.fangpaoPlayerId != -1) {
-            tv = (TextView)detailView.findViewById(R.id.fangpao_player);
-            tv.setText(mGameInfo.mPlayerNames[ri.fangpaoPlayerId]);
         } else {
             
+            
+            tv = (TextView)detailView.findViewById(R.id.hupai_player_name);
+            if(ri.hupaiPlayerId != -1) {
+                tv.setText(mGameInfo.mPlayerNames[ri.hupaiPlayerId]);
+            } else {
+                tv.setText("нч");
+            }
+            tv = (TextView)detailView.findViewById(R.id.huzishu);
+            tv.setText(Integer.toString(ri.huzishu));
+            
+            tv = (TextView)detailView.findViewById(R.id.shangxing);
+            tv.setText(Integer.toString(ri.shangxing));
+            if(!mGameInfo.mHasShangxiaxing) {
+                tv = (TextView)detailView.findViewById(R.id.shangxing_title);
+                tv.setText(R.string.xing);
+            }
+            
+            View xiaxingLayout = detailView.findViewById(R.id.xiaxing_layout);
+            if(mGameInfo.mHasShangxiaxing) {
+                xiaxingLayout.setVisibility(View.VISIBLE);
+                tv = (TextView)detailView.findViewById(R.id.xiaxing);
+                tv.setText(Integer.toString(ri.xiaxing));
+            } else {
+                xiaxingLayout.setVisibility(View.GONE);
+            }
+            
+            tv = (TextView)detailView.findViewById(R.id.zimo);
+            if(ri.zimo) {
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(R.string.zimo);
+            } else if(ri.hupaiPlayerId < 0){
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(R.string.huangzhuang);
+            } else if(ri.huzishu < 0){
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(R.string.chahuzi);
+            } else {
+                tv.setVisibility(View.GONE);
+            }
+            if(ri.fangpaoPlayerId != -1) {
+                tv = (TextView)detailView.findViewById(R.id.fangpao_player);
+                tv.setText(mGameInfo.mPlayerNames[ri.fangpaoPlayerId]);
+            } else {
+                
+            }
         }
     }
 

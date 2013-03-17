@@ -118,7 +118,7 @@ public class GameInfo {
     
     public void updateRound(int roundId, RoundInfo ri) {
         mRoundInfos.set(roundId, ri);
-        refreshPointsCache(roundId - 1);
+        refreshPointsCache(roundId);
     }
     
     public void deleteRound(int position) {
@@ -194,6 +194,14 @@ public class GameInfo {
         return newRoundPoints;
     }
     
+    public void initPoints(int[] points) {
+        RoundInfo ri = new RoundInfo();
+        ri.zhuangjiaId = mStartZhuangjiaId;
+        //Add dummy round as first round.
+        mRoundInfos.add(ri);
+        mPointsCache.add(points);
+    }
+    
     public void refreshPointsCache(int startIndex) {
         ArrayList<int[]> newPoints = new ArrayList<int[]>();
         for(int i = 0; i < mRoundInfos.size(); i ++) {
@@ -202,13 +210,13 @@ public class GameInfo {
             } else {
                 int[] prePoints;
                 if(i == 0) {
-                    prePoints = mStartPoints;
+                    newPoints.add(mStartPoints);
                 } else {
                     prePoints = newPoints.get(i - 1);
+                    RoundInfo ri = mRoundInfos.get(i);
+                    int[] points = calcPoints(prePoints, ri);
+                    newPoints.add(points);
                 }
-                RoundInfo ri = mRoundInfos.get(i);
-                int[] points = calcPoints(prePoints, ri);
-                newPoints.add(points);
             }
         }
         mPointsCache = newPoints;
