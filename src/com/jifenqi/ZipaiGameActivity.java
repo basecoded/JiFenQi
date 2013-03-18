@@ -190,7 +190,9 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     protected void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         //outState.putBoolean(Const.KEY_RESUME, true);
-        Utils.putBooleanSP(this, Const.KEY_RESUME, true);
+        if(!mIsHistory) {
+            Utils.putBooleanSP(this, Const.KEY_RESUME, true);
+        }
     }
     
     @Override

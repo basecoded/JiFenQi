@@ -154,8 +154,6 @@ public class JiFenQiActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        boolean needResume = Utils.getBooleanSP(this, Const.KEY_RESUME);
-        Toast.makeText(this, "aa:" + needResume, Toast.LENGTH_SHORT);
     }
     
     @Override
