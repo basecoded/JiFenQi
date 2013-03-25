@@ -1,7 +1,8 @@
 package com.jifenqi;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -18,9 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -90,6 +89,12 @@ public class HistoryActivity extends Activity implements AdapterView.OnItemClick
         String zipaiDir = Utils.getZipaiDir();
         File historyPath = new File(zipaiDir);
         String[] historyFiles = historyPath.list(new ZipaiHistoryFileFilter());
+        Arrays.sort(historyFiles, new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                return -lhs.compareTo(rhs);
+            }
+        });
         if(historyFiles == null || historyFiles.length == 0) {
             view.setVisibility(View.VISIBLE);
             mListView.setVisibility(View.GONE);

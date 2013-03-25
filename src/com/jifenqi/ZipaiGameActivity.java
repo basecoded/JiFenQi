@@ -974,8 +974,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
 
     private void saveGame() {
-        //Don't save if less than 3 round
-        if(mGameInfo.mRoundInfos.size() >= 3) {
+        //Don't save if there is only the start points
+        if(mGameInfo.mRoundInfos.size() >= 2) {
             String filePath = Const.ZIPAI + "_" + mGameInfo.mStartTime + ".xml";
             PersistenceUtils.saveGame(mGameInfo, filePath);
             mGameSaved = true;
