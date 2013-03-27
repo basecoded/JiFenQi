@@ -83,6 +83,7 @@ public class JiFenQiActivity extends Activity {
         mPlayerNumberSpinner = (Spinner)findViewById(R.id.player_number);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this, R.array.player_numbers, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mPlayerNumberSpinner.setAdapter(adapter);
         mPlayerNumberSpinner.setSelection(1); //Default to 4 players
         mPlayerNumberSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -154,6 +155,28 @@ public class JiFenQiActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.zipai_help_menu, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.help:
+                showHelp();
+                return true;
+            case R.id.about:
+                showAbout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     
     @Override
@@ -267,10 +290,23 @@ public class JiFenQiActivity extends Activity {
         String[] names = getPlayerNames();
         ArrayAdapter<String> zhuangjiaAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, names);
+        zhuangjiaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mZhuangjiaSpinner.setAdapter(zhuangjiaAdapter);
     }
     
     private void showErrorDialog() {
         Toast.makeText(this, R.string.cannot_start, Toast.LENGTH_SHORT).show();
+    }
+    
+    private void showAbout() {
+        Intent intent = new Intent();
+        intent.setClass(this, AboutActivity.class);
+        startActivity(intent);
+    }
+    
+    private void showHelp() {
+//        Intent intent = new Intent();
+//        intent.setClass(this, HelpActivity.class);
+//        startActivity(intent);
     }
 }

@@ -52,7 +52,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     private static final int EDIT_ROUND_ID = 10;
     private GameInfo mGameInfo;
     private ListView mRoundList;
-    private TextView[] mPlayersView;
+    private View[] mPlayersView;
     private boolean mGameSaved;
     private boolean mIsHistory;
     private ColorStateList mInitTextColor;
@@ -321,7 +321,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                             CharSequence name = tv2.getText();
                             if(name != null && name.length() != 0) {
                                 int viewId = (Integer)tv2.getTag();
-                                TextView tv = (TextView)findViewById(viewId);
+                                View v = findViewById(viewId);
+                                TextView tv = (TextView)v.findViewById(R.id.player_name);
                                 tv.setText(name);
                             }
                         }
@@ -374,7 +375,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             break;
         case CHANGE_PLAYER_NAME_ID:
             int viewId = args.getInt(Const.EXTRA_PLAYERVIEW_ID);
-            TextView tv = (TextView)findViewById(viewId);
+            View v = findViewById(viewId);
+            TextView tv = (TextView)v.findViewById(R.id.player_name);
             TextView tv2 = (TextView) dialog.findViewById(R.id.change_player_name);
             tv2.setText(tv.getText());
             tv2.setTag(viewId);
@@ -452,6 +454,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         CharSequence[] names = mGameInfo.mPlayerNames.clone();
         ArrayAdapter<CharSequence> zhuangjiaAdapter = new ArrayAdapter<CharSequence>(this,
                 android.R.layout.simple_spinner_item, names);
+        zhuangjiaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         zhuangjiaSpinner.setAdapter(zhuangjiaAdapter);
     }
     
@@ -532,6 +535,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         }
         ArrayAdapter<FangPaoPair > adapter = new ArrayAdapter<FangPaoPair>(this,
                 android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fangpaoSpinner.setAdapter(adapter);
         fangpaoSpinner.setSelection(faopaoPlayerPos);
         fangpaoSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -583,9 +587,6 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 Intent intent = new Intent();
                 intent.setClass(this, HistoryActivity.class);
                 startActivity(intent);
-                return true;
-            case R.id.about:
-                showAbout();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -669,33 +670,40 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
     
     private void initView() {
-        mPlayersView = new TextView[mGameInfo.mPlayerNumber];
-        TextView tv = (TextView)findViewById(R.id.player1_name);
-        mPlayersView[0] = tv;
+        mPlayersView = new View[mGameInfo.mPlayerNumber];
+        TextView tv;
+        
+        View view = findViewById(R.id.player1_info);
+        mPlayersView[0] = view;
+        tv = (TextView)view.findViewById(R.id.player_name);
         tv.setText(mGameInfo.mPlayerNames[0]);
-        tv.setOnClickListener(this);
-        tv = (TextView)findViewById(R.id.player2_name);
-        mPlayersView[1] = tv;
+        
+        view = findViewById(R.id.player2_info);
+        mPlayersView[1] = view;
+        tv = (TextView)view.findViewById(R.id.player_name);
         tv.setText(mGameInfo.mPlayerNames[1]);
-        tv.setOnClickListener(this);
-        tv = (TextView)findViewById(R.id.player3_name);
-        mPlayersView[2] = tv;
+        
+        view = findViewById(R.id.player3_info);
+        mPlayersView[2] = view;
+        tv = (TextView)view.findViewById(R.id.player_name);
         tv.setText(mGameInfo.mPlayerNames[2]);
-        tv.setOnClickListener(this);
         
         if(mGameInfo.mPlayerNumber == 4) {
-            tv = (TextView)findViewById(R.id.player4_name);
-            mPlayersView[3] = tv;
+            view = findViewById(R.id.player4_info);
+            mPlayersView[3] = view;
+            tv = (TextView)view.findViewById(R.id.player_name);
             tv.setText(mGameInfo.mPlayerNames[3]);
-            tv.setOnClickListener(this);
         } else {
-            tv = (TextView)findViewById(R.id.player4_name);
-            tv.setVisibility(View.GONE);
+            view = findViewById(R.id.player4_info);
+            view.setVisibility(View.GONE);
             findViewById(R.id.player4_name_div).setVisibility(View.GONE);
         }
         
-        for(int i = 0; i < mPlayersView.length; i++) {
-            mPlayersView[i].setOnLongClickListener(this);
+        if(!mIsHistory) {
+            for(int i = 0; i < mPlayersView.length; i++) {
+                mPlayersView[i].setOnClickListener(this);
+                mPlayersView[i].setOnLongClickListener(this);
+            }
         }
         
         tv = (TextView)findViewById(R.id.start_points);
@@ -713,7 +721,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         
         mRoundList.setOnItemClickListener(this);
         
-        mInitTextColor = mPlayersView[0].getTextColors();
+        //mInitTextColor = mPlayersView[0].getTextColors();
         updatePlayersView();
     }
 
@@ -721,14 +729,10 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     public void onClick(View v) {
         int id = v.getId();
         switch(id) {
-        case R.id.player1_name:
-        case R.id.player2_name:
-        case R.id.player3_name:
-        case R.id.player4_name:
-            if(mIsHistory) {
-                return ;
-            }
-            
+        case R.id.player1_info:
+        case R.id.player2_info:
+        case R.id.player3_info:
+        case R.id.player4_info:
             int hupaiPlayerId = getPlayerId(id);
             Bundle args = new Bundle();
             args.putInt(Const.EXTRA_ROUND_DIALOG_TYPE, Const.ROUND_DIALOG_TYPE_NEW);
@@ -750,16 +754,22 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         int zhuangjiaId = mGameInfo.getLastZhuangjiaId();
         int shuxingPlayerId = Utils.getShuxingPlayer(zhuangjiaId);
         for (int i = 0; i < mPlayersView.length; i++) {
+            TextView tv = (TextView)mPlayersView[i].findViewById(R.id.player_status);
             if (zhuangjiaId == i) {
                 //mPlayersView[i].setBackgroundResource(R.drawable.zhuangjia_bg);
-                mPlayersView[i].setTextColor(0xFFFF8800);
+                //mPlayersView[i].setTextColor(0xFFFF8800);
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(R.string.zhuang);
             } else {
                 //mPlayersView[i].setBackgroundResource(R.drawable.item_bg_2);
-                mPlayersView[i].setTextColor(mInitTextColor);
+                //mPlayersView[i].setTextColor(mInitTextColor);
+                tv.setVisibility(View.GONE);
             }
             if (mGameInfo.mPlayerNumber == 4) {
                 if (shuxingPlayerId == i) {
                     mPlayersView[i].setEnabled(false);
+                    tv.setVisibility(View.VISIBLE);
+                    tv.setText(R.string.xing);
                 } else {
                     mPlayersView[i].setEnabled(true);
                 }
@@ -807,6 +817,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         }
         ArrayAdapter<FangPaoPair > adapter = new ArrayAdapter<FangPaoPair>(this,
                 android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
         sp.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(
@@ -913,13 +924,13 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     private int getPlayerId(int viewId) {
         int playerId = 0;
-        if(viewId == R.id.player1_name) {
+        if(viewId == R.id.player1_info) {
             playerId = 0;
-        } else if(viewId == R.id.player2_name) {
+        } else if(viewId == R.id.player2_info) {
             playerId = 1;
-        } else if(viewId == R.id.player3_name) {
+        } else if(viewId == R.id.player3_info) {
             playerId = 2;
-        } else if(viewId == R.id.player4_name) {
+        } else if(viewId == R.id.player4_info) {
             playerId = 3;
         }
         
@@ -1087,16 +1098,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
 
     @Override
     public boolean onLongClick(View v) {
-        if(mIsHistory) {
-            return false;
-        }
-        
         int id = v.getId();
         switch(id) {
-        case R.id.player1_name:
-        case R.id.player2_name:
-        case R.id.player3_name:
-        case R.id.player4_name:
+        case R.id.player1_info:
+        case R.id.player2_info:
+        case R.id.player3_info:
+        case R.id.player4_info:
             Bundle args = new Bundle();
             args.putInt(Const.EXTRA_PLAYERVIEW_ID, id);
             showDialog(CHANGE_PLAYER_NAME_ID, args);

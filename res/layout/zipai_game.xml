@@ -16,55 +16,30 @@
             android:layout_width="2dp"
             android:layout_height="wrap_content"
             android:background="@drawable/vertical_divider_1"/>
-        <TextView
-            android:id="@+id/player1_name"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:background="@drawable/item_bg_2"
-             />
+        <include android:id="@+id/player1_info"
+            layout="@layout/zipai_player_info"/>
+        
         <View 
             android:layout_width="2dp"
             android:layout_height="wrap_content"
             android:background="@drawable/vertical_divider_1"/>
-        <TextView
-            android:id="@+id/player2_name"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:background="@drawable/item_bg_2"
-             />
+        <include android:id="@+id/player2_info"
+            layout="@layout/zipai_player_info"/>
+        
         <View 
             android:layout_width="2dp"
             android:layout_height="wrap_content"
             android:background="@drawable/vertical_divider_1"/>
-        <TextView
-            android:id="@+id/player3_name"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:background="@drawable/item_bg_2"
-             />
+        <include android:id="@+id/player3_info"
+            layout="@layout/zipai_player_info"/>
+        
         <View 
             android:id="@+id/player4_name_div"
             android:layout_width="2dp"
             android:layout_height="wrap_content"
             android:background="@drawable/vertical_divider_1"/>
-        <TextView
-            android:id="@+id/player4_name"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:background="@drawable/item_bg_2"
-             />
+        <include android:id="@+id/player4_info"
+            layout="@layout/zipai_player_info"/>
     </LinearLayout>
     
     <View 

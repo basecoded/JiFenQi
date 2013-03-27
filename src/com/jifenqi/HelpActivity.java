@@ -18,20 +18,20 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class AboutActivity extends Activity {
+public class HelpActivity extends Activity {
     private static final String TAG = "AboutActivity";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.about_layout);
+        setContentView(R.layout.help_layout);
         
         TextView versionView = (TextView)findViewById(R.id.about_version);
         
         Context context = this;
         try {
             String version = context.getPackageManager().getPackageInfo(context.getPackageName(), 0 ).versionName;
-            versionView.setText("°æ±¾: " + version);
+            versionView.setText(version);
         } catch (NameNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

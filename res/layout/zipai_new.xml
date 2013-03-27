@@ -32,6 +32,7 @@
             android:id="@+id/player1_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/hint_player_name"
             android:layout_weight="1"/>
         <EditText 
             android:id="@+id/player1_start_point"
@@ -55,6 +56,7 @@
             android:id="@+id/player2_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/hint_player_name"
             android:layout_weight="1"/>
         <EditText 
             android:id="@+id/player2_start_point"
@@ -78,6 +80,7 @@
             android:id="@+id/player3_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/hint_player_name"
             android:layout_weight="1"/>
         <EditText 
             android:id="@+id/player3_start_point"
@@ -102,6 +105,7 @@
             android:id="@+id/player4_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/hint_player_name"
             android:layout_weight="1"/>
         <EditText 
             android:id="@+id/player4_start_point"
