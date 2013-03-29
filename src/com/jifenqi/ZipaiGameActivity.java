@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -271,37 +272,17 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             .create();
         case STARTPOINTS_ID:
             view = factory.inflate(R.layout.zipai_start_points, null);
-            try {
-                TextView tv = (TextView)view.findViewById(R.id.player1_name);
-                tv.setText(mGameInfo.mPlayerNames[0] +": ");
-                tv = (TextView)view.findViewById(R.id.player1_start_point);
-                tv.setText(Integer.toString(mGameInfo.mStartPoints[0]));
-                tv = (TextView)view.findViewById(R.id.player2_name);
-                tv.setText(mGameInfo.mPlayerNames[1] +": ");
-                tv = (TextView)view.findViewById(R.id.player2_start_point);
-                tv.setText(Integer.toString(mGameInfo.mStartPoints[1]));
-                tv = (TextView)view.findViewById(R.id.player3_name);
-                tv.setText(mGameInfo.mPlayerNames[2] +": ");
-                tv = (TextView)view.findViewById(R.id.player3_start_point);
-                tv.setText(Integer.toString(mGameInfo.mStartPoints[2]));
-                if(mGameInfo.mPlayerNumber == 4) {
-                    tv = (TextView)view.findViewById(R.id.player4_name);
-                    tv.setText(mGameInfo.mPlayerNames[3] +": ");
-                    tv = (TextView)view.findViewById(R.id.player4_start_point);
-                    tv.setText(Integer.toString(mGameInfo.mStartPoints[3]));
-                }
-                tv = (TextView)view.findViewById(R.id.start_zhuangjia_name);
-                tv.setText(mGameInfo.mPlayerNames[mGameInfo.mStartZhuangjiaId]);
-            } catch(Exception e) {
-                return null;
-            }
-            
             return new AlertDialog.Builder(this)
             .setTitle(R.string.hint_start_point)
             .setView(view)
             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    
+                    editStartPoints((Dialog)dialog);
+                }
+            })
+            .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
                 }
             })
             .create();
@@ -384,6 +365,9 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         case RECORDROUNDDIALOG_ID:
             prepareRecordRoundDialog(dialog, args);
             break;
+        case STARTPOINTS_ID:
+            prepareStartPointsDialog(dialog);
+            break;
         }
     }
     
@@ -441,6 +425,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         tv.setText(Integer.toString(remainPoints[2]));
         
         View v = dialog.findViewById(R.id.player4);
+        CheckedTextView autoSeatView = (CheckedTextView)dialog.findViewById(R.id.auto_change_seat);
+        autoSeatView.setOnClickListener(this);
         if(mGameInfo.mPlayerNumber == 4) {
             tv = (TextView)dialog.findViewById(R.id.player4_name);
             tv.setText(mGameInfo.mPlayerNames[3]);
@@ -448,6 +434,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             tv.setText(Integer.toString(remainPoints[3]));
         } else {
             v.setVisibility(View.GONE);
+            autoSeatView.setVisibility(View.GONE);
+            autoSeatView.setChecked(false);
         }
         
         Spinner zhuangjiaSpinner = (Spinner)dialog.findViewById(R.id.zhuangjia_spinner);
@@ -707,7 +695,9 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         }
         
         tv = (TextView)findViewById(R.id.start_points);
-        tv.setOnClickListener(this);
+        if(!mIsHistory) {
+            tv.setOnClickListener(this);
+        }
         
         mRoundList = (ListView)findViewById(R.id.list);
         RoundAdapter adapter = new RoundAdapter(this);
@@ -743,6 +733,10 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         case R.id.start_points:
             showDialog(STARTPOINTS_ID);
             break;
+        case R.id.auto_change_seat:
+            CheckedTextView cv = (CheckedTextView)v;
+            cv.toggle();
+            break;
         }
     }
     
@@ -768,10 +762,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             if (mGameInfo.mPlayerNumber == 4) {
                 if (shuxingPlayerId == i) {
                     mPlayersView[i].setEnabled(false);
+                    mPlayersView[i].findViewById(R.id.player_name).setEnabled(false);
                     tv.setVisibility(View.VISIBLE);
                     tv.setText(R.string.xing);
                 } else {
                     mPlayersView[i].setEnabled(true);
+                    mPlayersView[i].findViewById(R.id.player_name).setEnabled(true);
                 }
             }
         }
@@ -959,21 +955,53 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             showDialog(ERRORNUMBER_ID);
             return;
         }
-        
         int[] startPoints = remainPoints;
+        
+        CheckedTextView autoSeatView = (CheckedTextView) dialog.findViewById(R.id.auto_change_seat);
+        boolean isAutoChangeSeat = autoSeatView.isChecked();
+        
         preNewGameContinue();
+        
+        int playerNumber = mGameInfo.mPlayerNumber;
         Intent newIntent = new Intent();
-        setupIntent(newIntent, mGameInfo);
-        if(mGameInfo.mPlayerNumber == 4) {
+        
+        if(playerNumber == 4 && !isAutoChangeSeat) {
             newIntent.setClass(this, ChooseSeatActivity.class);
         } else {
             newIntent.setClass(this, ZipaiGameActivity.class);
         }
         
-        newIntent.putExtra(Const.EXTRA_STARTPOINTS, startPoints);
-        
         Spinner zhuangjiaSpinner = (Spinner)dialog.findViewById(R.id.zhuangjia_spinner);
         CharSequence zhuangjiaName = (CharSequence)zhuangjiaSpinner.getSelectedItem();
+        
+        String[] playerNames = mGameInfo.mPlayerNames;
+        if(isAutoChangeSeat) {
+            int zhuangjiaIndex;
+            for(zhuangjiaIndex = 0; zhuangjiaIndex < playerNumber; zhuangjiaIndex++) {
+                if(zhuangjiaName.equals(mGameInfo.mPlayerNames[zhuangjiaIndex])) {
+                    break;
+                }
+            }
+            String[] newPlayerNames = new String[playerNumber];
+            int[] newStartPoints = new int[playerNumber];
+            for(int i = 0; i < playerNumber; i++) {
+                int nextIndex = (i+1) % playerNumber;
+                if(nextIndex == zhuangjiaIndex) {
+                    nextIndex++;
+                    nextIndex %= playerNumber;
+                } else if(i == zhuangjiaIndex){
+                    nextIndex = i;
+                }
+                newPlayerNames[nextIndex] = mGameInfo.mPlayerNames[i];
+                newStartPoints[nextIndex] = startPoints[i];
+            }
+            startPoints = newStartPoints;
+            playerNames = newPlayerNames;
+        }
+        newIntent.putExtra(Const.EXTRA_STARTPOINTS, startPoints);
+        newIntent.putExtra(Const.EXTRA_PLAYERNAMES, playerNames);
+        newIntent.putExtra(Const.EXTRA_PLAYERNUMBER, playerNumber);
+        newIntent.putExtra(Const.EXTRA_SHANGXIAXING, mGameInfo.mHasShangxiaxing);
         newIntent.putExtra(Const.EXTRA_ZHUANGJIANAME, zhuangjiaName);
         
         startActivity(newIntent);
@@ -1112,11 +1140,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         return false;
     }
     
-    private void setupIntent(Intent intent, GameInfo gi) {
-        intent.putExtra(Const.EXTRA_PLAYERNUMBER, gi.mPlayerNumber);
-        intent.putExtra(Const.EXTRA_PLAYERNAMES, gi.mPlayerNames);
-        intent.putExtra(Const.EXTRA_SHANGXIAXING, gi.mHasShangxiaxing);
-    }
+//    private void setupIntent(Intent intent, GameInfo gi, boolean isAutoChangeSeat) {
+//        String[] playerNames;
+//        intent.putExtra(Const.EXTRA_PLAYERNUMBER, gi.mPlayerNumber);
+//        intent.putExtra(Const.EXTRA_PLAYERNAMES, gi.mPlayerNames);
+//        intent.putExtra(Const.EXTRA_SHANGXIAXING, gi.mHasShangxiaxing);
+//    }
     
     private void doRecordRound(RecordRoundDialog dialog) {
         try {
@@ -1193,6 +1222,57 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
 //            recordRound(zhuangjiaId, theHupaiPlayerId, huzi, shangxing, xiaxing, isZimo, fangpaoPlayer);
         } catch(NumberFormatException e) {
             showDialog(ERRORNUMBER_ID);
+        }
+    }
+    
+    
+    private void prepareStartPointsDialog(Dialog dialog) {
+        try {
+            TextView tv = (TextView)dialog.findViewById(R.id.player1_name);
+            tv.setText(mGameInfo.mPlayerNames[0] +": ");
+            tv = (TextView)dialog.findViewById(R.id.player1_start_point);
+            tv.setText(Integer.toString(mGameInfo.mStartPoints[0]));
+            tv = (TextView)dialog.findViewById(R.id.player2_name);
+            tv.setText(mGameInfo.mPlayerNames[1] +": ");
+            tv = (TextView)dialog.findViewById(R.id.player2_start_point);
+            tv.setText(Integer.toString(mGameInfo.mStartPoints[1]));
+            tv = (TextView)dialog.findViewById(R.id.player3_name);
+            tv.setText(mGameInfo.mPlayerNames[2] +": ");
+            tv = (TextView)dialog.findViewById(R.id.player3_start_point);
+            tv.setText(Integer.toString(mGameInfo.mStartPoints[2]));
+            if(mGameInfo.mPlayerNumber == 4) {
+                tv = (TextView)dialog.findViewById(R.id.player4_name);
+                tv.setText(mGameInfo.mPlayerNames[3] +": ");
+                tv = (TextView)dialog.findViewById(R.id.player4_start_point);
+                tv.setText(Integer.toString(mGameInfo.mStartPoints[3]));
+            } else {
+                dialog.findViewById(R.id.player4_name).setVisibility(View.GONE);
+            }
+            tv = (TextView)dialog.findViewById(R.id.start_zhuangjia_name);
+            tv.setText(mGameInfo.mPlayerNames[mGameInfo.mStartZhuangjiaId]);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void editStartPoints(Dialog dialog) {
+        int[] startPoints;
+        startPoints = new int[mGameInfo.mPlayerNumber];
+        try {
+            TextView tv = (TextView)dialog.findViewById(R.id.player1_start_point);
+            startPoints[0] = Integer.parseInt(tv.getText().toString());
+            tv = (TextView)dialog.findViewById(R.id.player2_start_point);
+            startPoints[1] = Integer.parseInt(tv.getText().toString());
+            tv = (TextView)dialog.findViewById(R.id.player3_start_point);
+            startPoints[2] = Integer.parseInt(tv.getText().toString());
+            if(mGameInfo.mPlayerNumber == 4) {
+                tv = (TextView)dialog.findViewById(R.id.player4_start_point);
+                startPoints[3] = Integer.parseInt(tv.getText().toString());
+            }
+            mGameInfo.mStartPoints = startPoints;
+            mGameInfo.refreshPointsCache(0);
+            refreshRoundList();
+        } catch(NumberFormatException e) {
+            e.printStackTrace();
         }
     }
 }

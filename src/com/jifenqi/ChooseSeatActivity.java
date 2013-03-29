@@ -28,6 +28,7 @@ public class ChooseSeatActivity extends Activity implements OnTouchListener
     private Button mStartBtn, mRechooseBtn;
     
     private View mDragView;
+    private CharSequence[] mNames;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,11 +54,11 @@ public class ChooseSeatActivity extends Activity implements OnTouchListener
         mRechooseBtn.setOnClickListener(this);
         
         Intent intent = getIntent();
-        CharSequence[] names = intent.getCharSequenceArrayExtra(Const.EXTRA_PLAYERNAMES);
-        mPlayer1.setText(names[0]);
-        mPlayer2.setText(names[1]);
-        mPlayer3.setText(names[2]);
-        mPlayer4.setText(names[3]);
+        mNames = intent.getCharSequenceArrayExtra(Const.EXTRA_PLAYERNAMES);
+        mPlayer1.setText(mNames[0]);
+        mPlayer2.setText(mNames[1]);
+        mPlayer3.setText(mNames[2]);
+        mPlayer4.setText(mNames[3]);
     }
 
     float mDragOriginX;
@@ -249,6 +250,17 @@ public class ChooseSeatActivity extends Activity implements OnTouchListener
         names[2] = mSeat3.getText().toString();
         names[3] = mSeat4.getText().toString();
         intent.putExtra(Const.EXTRA_PLAYERNAMES, names);
+        int[] newStartPoints = new int[4];
+        int[] startPoints = intent.getIntArrayExtra(Const.EXTRA_STARTPOINTS);
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 4; j++) {
+                if(names[i].equals(mNames[j])) {
+                    newStartPoints[i] = startPoints[j];
+                    break;
+                }
+            }
+        }
+        intent.putExtra(Const.EXTRA_STARTPOINTS, newStartPoints);
         startActivity(intent);
         finish();
     }

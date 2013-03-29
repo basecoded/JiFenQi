@@ -88,4 +88,13 @@
     </LinearLayout>
     
     <include layout="@layout/zipai_zhuangjia_spinner"/>
+    
+    <CheckedTextView 
+        android:id="@+id/auto_change_seat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/auto_change_seat"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:checked="true"
+        />
 </LinearLayout>
