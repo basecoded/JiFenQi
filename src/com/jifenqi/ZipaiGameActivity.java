@@ -555,7 +555,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 huziView.setText(Integer.toString(ri.huzishu));
             }
             zimoCheckBox.setChecked(ri.zimo);
-            huangzhuangCheckBox.setChecked(ri.hupaiPlayerId == 0 ? true : false);
+            huangzhuangCheckBox.setChecked(ri.hupaiPlayerId == -1 ? true : false);
         } else {
             
         }
@@ -1014,7 +1014,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
 
     private void saveGame() {
         //Don't save if there is only the start points
-        if(mGameInfo.mRoundInfos.size() >= 2) {
+        if(mGameInfo.mRoundInfos.size() > 0) {
             String filePath = Const.ZIPAI + "_" + mGameInfo.mStartTime + ".xml";
             PersistenceUtils.saveGame(mGameInfo, filePath);
             mGameSaved = true;
