@@ -47,7 +47,7 @@
             android:layout_height="2dp"
             android:background="@drawable/horizontal_divider"/>
     
-    <ListView
+    <com.jifenqi.MyListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

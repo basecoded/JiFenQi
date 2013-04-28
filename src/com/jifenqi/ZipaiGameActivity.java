@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -53,7 +54,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     private static final int PROGRESS_LOAD_ID = 9;
     private static final int EDIT_ROUND_ID = 10;
     private GameInfo mGameInfo;
-    private ListView mRoundList;
+    private MyListView mRoundList;
     private View[] mPlayersView;
     private boolean mGameSaved;
     private boolean mIsHistory;
@@ -700,7 +701,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             tv.setOnClickListener(this);
         }
         
-        mRoundList = (ListView)findViewById(R.id.list);
+        mRoundList = (MyListView)findViewById(R.id.list);
         RoundAdapter adapter = new RoundAdapter(this);
         mRoundList.setAdapter(adapter);
         //registerForContextMenu(mRoundList);
@@ -709,27 +710,33 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             //init the last game
             saveLastGame();
         }
-        mRoundList.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right,
-                    int bottom, int oldLeft, int oldTop, int oldRight,
-                    int oldBottom) {
-                // TODO Auto-generated method stub
-                if(!mIsHistory) {
-                    RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
-                    if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
-                        //mRoundList.smoothScrollToPosition(a.getCount());
-                        //mRoundList.setSelection(a.getCount() - 1);
-                        mRoundList.setStackFromBottom(true);
-                        mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                    } else {
-                        mRoundList.setStackFromBottom(false);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ) {
+            if(!mIsHistory) {
+                mRoundList.setStackFromBottom(true);
+                mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+            }
+        } else {
+            mRoundList.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right,
+                        int bottom, int oldLeft, int oldTop, int oldRight,
+                        int oldBottom) {
+                    // TODO Auto-generated method stub
+                    if(!mIsHistory) {
+                        RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
+                        if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
+                            //mRoundList.smoothScrollToPosition(a.getCount());
+                            //mRoundList.setSelection(a.getCount() - 1);
+                            mRoundList.setStackFromBottom(true);
+                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                        } else {
+                            mRoundList.setStackFromBottom(false);
+                        }
                     }
                 }
-            }
-            
-        });
+                
+            });
+        }
         
         mRoundList.setOnItemClickListener(this);
         
