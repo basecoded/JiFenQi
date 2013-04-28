@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -708,6 +709,27 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             //init the last game
             saveLastGame();
         }
+        mRoundList.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right,
+                    int bottom, int oldLeft, int oldTop, int oldRight,
+                    int oldBottom) {
+                // TODO Auto-generated method stub
+                if(!mIsHistory) {
+                    RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
+                    if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
+                        //mRoundList.smoothScrollToPosition(a.getCount());
+                        //mRoundList.setSelection(a.getCount() - 1);
+                        mRoundList.setStackFromBottom(true);
+                        mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                    } else {
+                        mRoundList.setStackFromBottom(false);
+                    }
+                }
+            }
+            
+        });
         
         mRoundList.setOnItemClickListener(this);
         

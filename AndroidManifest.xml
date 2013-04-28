@@ -63,6 +63,16 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/help"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

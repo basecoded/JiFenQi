@@ -305,8 +305,8 @@ public class JiFenQiActivity extends Activity {
     }
     
     private void showHelp() {
-//        Intent intent = new Intent();
-//        intent.setClass(this, HelpActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent();
+        intent.setClass(this, HelpActivity.class);
+        startActivity(intent);
     }
 }
