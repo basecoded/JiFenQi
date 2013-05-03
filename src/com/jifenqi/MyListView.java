@@ -6,10 +6,10 @@ import android.widget.ListView;
 
 public class MyListView extends ListView {
     
-    private OnSizeChangeListener mListener;
+    private OnMyLayoutChangeListener mListener;
     
-    public interface OnSizeChangeListener {
-        void onSizeChanged(int w, int h, int oldw, int oldh);
+    public interface OnMyLayoutChangeListener {
+        void onLayoutChange(int left, int top, int right, int bottom);
     }
 
     public MyListView(Context context) {
@@ -24,15 +24,16 @@ public class MyListView extends ListView {
     public MyListView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-
-    protected void onSizeChanged (int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if(mListener != null) {
-            mListener.onSizeChanged(w, h, oldw, oldh);
+    
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if(changed && mListener != null) {
+            mListener.onLayoutChange(left, top, right, bottom);
         }
     }
-    
-    public void setOnSizeChangeListener(OnSizeChangeListener l) {
+
+    public void setOnMyLayoutChangeListener(OnMyLayoutChangeListener l) {
         mListener = l;
     }
 }

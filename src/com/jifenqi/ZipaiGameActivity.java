@@ -3,6 +3,7 @@ package com.jifenqi;
 import java.util.ArrayList;
 
 import com.jifenqi.GameInfo.RoundInfo;
+import com.jifenqi.MyListView.OnMyLayoutChangeListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -712,8 +713,24 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         }
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ) {
             if(!mIsHistory) {
-                mRoundList.setStackFromBottom(true);
-                mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                mRoundList.setOnMyLayoutChangeListener(new OnMyLayoutChangeListener() {
+
+                    @Override
+                    public void onLayoutChange(int left, int top, int right,
+                            int bottom) {
+                        RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
+                        if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
+                            //mRoundList.smoothScrollToPosition(a.getCount());
+                            //mRoundList.setSelection(a.getCount() - 1);
+                            mRoundList.setStackFromBottom(true);
+                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                        } else {
+                            mRoundList.setStackFromBottom(false);
+                        }
+                    }
+                });
+//                mRoundList.setStackFromBottom(true);
+//                mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
             }
         } else {
             mRoundList.addOnLayoutChangeListener(new OnLayoutChangeListener() {
