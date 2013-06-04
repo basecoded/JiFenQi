@@ -16,6 +16,7 @@
         <activity
             android:name=".JiFenQiActivity"
             android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|keyboardHidden|screenSize"
              >
             <intent-filter>
@@ -27,6 +28,7 @@
         
         <activity
             android:name=".ZipaiGameActivity"
+            android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|keyboardHidden|screenSize"
             >
             <intent-filter>
