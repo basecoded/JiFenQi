@@ -59,4 +59,5 @@
     <string name="hint_player_name">玩家名</string>
     <string name="zhuang">庄</string>
     <string name="auto_change_seat">自动换座位</string>
+    <string name="wu">无</string>
 </resources>

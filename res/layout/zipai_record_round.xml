@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:number="http://schemas.android.com/apk/res/com.jifenqi"
     android:id="@+id/record_round_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -12,10 +13,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/huzishu" />
-        <EditText 
+        <com.jifenqi.NumberPicker
             android:id="@+id/huzishu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            number:base="15"
+            number:step="5"
             android:digits="0123456789-"
             android:inputType="number"
             android:singleLine="true"/>
@@ -30,10 +33,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/shangxing" />
-        <EditText 
+        <com.jifenqi.NumberPicker
             android:id="@+id/shangxing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            number:base="0"
+            number:step="1"
             android:digits="0123456789"
             android:inputType="number"
             android:singleLine="true"/>
@@ -47,10 +52,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/xiaxing" />
-        <EditText 
+        <com.jifenqi.NumberPicker
             android:id="@+id/xiaxing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            number:base="0"
+            number:step="1"
             android:digits="0123456789"
             android:inputType="number"
             android:singleLine="true"/>

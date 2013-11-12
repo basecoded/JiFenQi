@@ -474,18 +474,18 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     private void initRoundDialog(Dialog dialog, int type, RoundInfo ri) {
         View view = dialog.findViewById(R.id.record_round_layout);
-        EditText huziView = (EditText)dialog.findViewById(R.id.huzishu);
-        EditText shangxingView = (EditText)dialog.findViewById(R.id.shangxing);
+        NumberPicker huziView = (NumberPicker)dialog.findViewById(R.id.huzishu);
+        NumberPicker shangxingView = (NumberPicker)dialog.findViewById(R.id.shangxing);
         View xiaxingLayout = dialog.findViewById(R.id.xiaxing_layout);
-        EditText xiaxingView = (EditText)dialog.findViewById(R.id.xiaxing);
+        NumberPicker xiaxingView = (NumberPicker)dialog.findViewById(R.id.xiaxing);
         CheckBox zimoCheckBox = (CheckBox)dialog.findViewById(R.id.zimo);
         CheckBox huangzhuangCheckBox = (CheckBox)dialog.findViewById(R.id.huangzhuang);
         Spinner fangpaoSpinner = (Spinner)dialog.findViewById(R.id.fangpao_player_spinner);
         
         //Clear
-        huziView.setText("");
-        shangxingView.setText("");
-        xiaxingView.setText("");
+        huziView.resetValue();
+        shangxingView.resetValue();
+        xiaxingView.resetValue();
         zimoCheckBox.setChecked(false);
         huangzhuangCheckBox.setChecked(false);
         if(mGameInfo.mPlayerNumber == 3) {
@@ -509,7 +509,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         });
         
         ArrayList<FangPaoPair> items = new ArrayList<FangPaoPair>();
-        items.add(new FangPaoPair("нч", -1));
+        String wu = getResources().getString(R.string.wu);
+        items.add(new FangPaoPair(wu, -1));
         int zhuangjiaId = ri.zhuangjiaId;
         int shuxingPlayerId = Utils.getShuxingPlayer(zhuangjiaId);
         int faopaoPlayerPos = 0;
@@ -547,15 +548,15 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         });
         
         if(type == Const.ROUND_DIALOG_TYPE_UPDATE) {
-            huziView.setText(Integer.toString(ri.huzishu));
+            huziView.setValue(ri.huzishu);
             if(ri.shangxing != 0) {
-                shangxingView.setText(Integer.toString(ri.shangxing));
+                shangxingView.setValue(ri.shangxing);
             }
             if(ri.xiaxing != 0) {
-                xiaxingView.setText(Integer.toString(ri.xiaxing));
+                xiaxingView.setValue(ri.xiaxing);
             }
             if(ri.huzishu != 0) {
-                huziView.setText(Integer.toString(ri.huzishu));
+                huziView.setValue(ri.huzishu);
             }
             zimoCheckBox.setChecked(ri.zimo);
             huangzhuangCheckBox.setChecked(ri.hupaiPlayerId == -1 ? true : false);
@@ -846,7 +847,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         
         Spinner sp = (Spinner)view.findViewById(R.id.fangpao_player_spinner);
         ArrayList<FangPaoPair> items = new ArrayList<FangPaoPair>();
-        items.add(new FangPaoPair("нч", -1));
+        String wu = getResources().getString(R.string.wu);
+        items.add(new FangPaoPair(wu, -1));
         int zhuangjiaId = mGameInfo.getLastZhuangjiaId();
         int shuxingPlayerId = Utils.getShuxingPlayer(zhuangjiaId);
         for(int i = 0; i < mGameInfo.mPlayerNumber; i++) {
@@ -886,24 +888,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                         AlertDialog ad = (AlertDialog)dialog;
                         
                         try {
-                            TextView huziView = (TextView)ad.findViewById(R.id.huzishu);
-                            CharSequence huziString = huziView.getText();
-                            int huzi = 0;
-                            if(huziString != null && huziString.length() != 0) {
-                                huzi = Integer.parseInt(huziString.toString());
-                            }
-                            TextView tv = (TextView)ad.findViewById(R.id.shangxing);
-                            CharSequence point = tv.getText();
-                            int shangxing = 0;
-                            if(point != null && point.length() != 0) {
-                                shangxing = Integer.parseInt(point.toString());
-                            }
-                            tv = (TextView)ad.findViewById(R.id.xiaxing);
-                            point = tv.getText();
-                            int xiaxing = 0;
-                            if(point != null && point.length() != 0) {
-                                xiaxing = Integer.parseInt(point.toString());
-                            }
+                            NumberPicker huziView = (NumberPicker)ad.findViewById(R.id.huzishu);
+                            int huzi = huziView.getValue();
+                            NumberPicker tv = (NumberPicker)ad.findViewById(R.id.shangxing);
+                            int shangxing = tv.getValue();
+                            tv = (NumberPicker)ad.findViewById(R.id.xiaxing);
+                            int xiaxing = tv.getValue();
                             CheckBox cb = (CheckBox)ad.findViewById(R.id.zimo);
                             boolean isZimo = cb.isChecked();
                             int fangpaoPlayer = -1;
@@ -1127,7 +1117,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             if(ri.hupaiPlayerId != -1) {
                 tv.setText(mGameInfo.mPlayerNames[ri.hupaiPlayerId]);
             } else {
-                tv.setText("нч");
+                String wu = getResources().getString(R.string.wu);
+                tv.setText(wu);
             }
             tv = (TextView)detailView.findViewById(R.id.huzishu);
             tv.setText(Integer.toString(ri.huzishu));
@@ -1197,24 +1188,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         try {
             View view = dialog.findViewById(R.id.record_round_layout);
             
-            TextView huziView = (TextView)dialog.findViewById(R.id.huzishu);
-            CharSequence huziString = huziView.getText();
-            int huzi = 0;
-            if(huziString != null && huziString.length() != 0) {
-                huzi = Integer.parseInt(huziString.toString());
-            }
-            TextView tv = (TextView)dialog.findViewById(R.id.shangxing);
-            CharSequence point = tv.getText();
-            int shangxing = 0;
-            if(point != null && point.length() != 0) {
-                shangxing = Integer.parseInt(point.toString());
-            }
-            tv = (TextView)dialog.findViewById(R.id.xiaxing);
-            point = tv.getText();
-            int xiaxing = 0;
-            if(point != null && point.length() != 0) {
-                xiaxing = Integer.parseInt(point.toString());
-            }
+            NumberPicker huziView = (NumberPicker)dialog.findViewById(R.id.huzishu);
+            int huzi = huziView.getValue();
+            NumberPicker tv = (NumberPicker)dialog.findViewById(R.id.shangxing);
+            int shangxing = tv.getValue();
+            tv = (NumberPicker)dialog.findViewById(R.id.xiaxing);
+            int xiaxing = tv.getValue();
             CheckBox cb = (CheckBox)dialog.findViewById(R.id.zimo);
             boolean isZimo = cb.isChecked();
             int fangpaoPlayer = -1;

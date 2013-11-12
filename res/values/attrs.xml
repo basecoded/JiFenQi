@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="Number">
+        <attr name="base" format="integer"/>
+        <attr name="step" format="integer"/>
+    </declare-styleable>
+</resources>
