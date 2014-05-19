@@ -13,6 +13,7 @@ public class NumberPicker extends LinearLayout implements View.OnClickListener{
     private int mCurrentValue;
     private int mBaseValue;
     private int mStep;
+    private boolean mCanNegative;
     private View mIncrementButton;
     private View mDecrementButton;
     private TextView mValueTextView;
@@ -32,6 +33,7 @@ public class NumberPicker extends LinearLayout implements View.OnClickListener{
                 R.styleable.Number, defStyle, 0);
         mBaseValue = a.getInt(R.styleable.Number_base, 0);
         mStep = a.getInt(R.styleable.Number_step, 1);
+        mCanNegative = a.getBoolean(R.styleable.Number_can_negative, false);
         
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
@@ -66,8 +68,10 @@ public class NumberPicker extends LinearLayout implements View.OnClickListener{
             newValue += mStep;
         } else {
             newValue -= mStep;
-            if(newValue < 0) {
-                newValue = 0;
+            if(!mCanNegative) {
+	            if(newValue < 0) {
+	                newValue = 0;
+	            }
             }
         }
         setValue(newValue);

@@ -10,13 +10,14 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/huzishu" />
         <com.jifenqi.NumberPicker
             android:id="@+id/huzishu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            number:can_negative="true"
             number:base="15"
             number:step="5"
             android:digits="0123456789-"
@@ -30,7 +31,7 @@
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/shangxing_name"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/shangxing" />
         <com.jifenqi.NumberPicker
@@ -49,7 +50,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/xiaxing" />
         <com.jifenqi.NumberPicker

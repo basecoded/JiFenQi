@@ -17,6 +17,8 @@ import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
@@ -54,12 +57,32 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     private static final int ERRORDIALOG_ID = 8;
     private static final int PROGRESS_LOAD_ID = 9;
     private static final int EDIT_ROUND_ID = 10;
+    
+    private static final int MSG_USERPOKE = 1;
+    private static final int MSG_DARK_BRIGHTNESS = 2;
+    
     private GameInfo mGameInfo;
     private MyListView mRoundList;
     private View[] mPlayersView;
     private boolean mGameSaved;
     private boolean mIsHistory;
     private ColorStateList mInitTextColor;
+    
+    private Handler mHandler = new Handler() {
+    	public void handleMessage(Message msg) {
+    		switch(msg.what) {
+    		case MSG_USERPOKE:
+    			setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
+    			if(!mHandler.hasMessages(MSG_DARK_BRIGHTNESS)) {
+    				mHandler.sendEmptyMessageDelayed(MSG_DARK_BRIGHTNESS, 20000);
+    			}
+    			break;
+    		case MSG_DARK_BRIGHTNESS:
+    			setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF);
+    			break;
+    		}
+    	}
+    };
     
     private class LoadTask extends AsyncTask<String, Void, Boolean> {
 
@@ -180,6 +203,11 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     @Override
     protected void onResume() {
+        if(!mIsHistory) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            pokeUser();
+        }
+        
         super.onResume();
     }
     
@@ -567,6 +595,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+    	pokeUser();
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.newgame_continue:
@@ -785,6 +814,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             cv.toggle();
             break;
         }
+        pokeUser();
     }
     
     private void updatePlayersView() {
@@ -1091,6 +1121,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             detailView.setVisibility(View.VISIBLE);
             updateRoundDetail(position, detailView);
         }
+        pokeUser();
     }
 
     private void updateRoundDetail(int position, View detailView) {
@@ -1163,6 +1194,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
 
     @Override
     public boolean onLongClick(View v) {
+    	pokeUser();
         int id = v.getId();
         switch(id) {
         case R.id.player1_info:
@@ -1272,6 +1304,7 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 tv.setText(Integer.toString(mGameInfo.mStartPoints[3]));
             } else {
                 dialog.findViewById(R.id.player4_name).setVisibility(View.GONE);
+                dialog.findViewById(R.id.player4_start_point).setVisibility(View.GONE);
             }
             tv = (TextView)dialog.findViewById(R.id.start_zhuangjia_name);
             tv.setText(mGameInfo.mPlayerNames[mGameInfo.mStartZhuangjiaId]);
@@ -1299,5 +1332,15 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         } catch(NumberFormatException e) {
             e.printStackTrace();
         }
+    }
+    
+    private void setBrightness(float brightness) {
+    	WindowManager.LayoutParams lp = getWindow().getAttributes();
+    	lp.screenBrightness = brightness;
+    	getWindow().setAttributes(lp);
+    }
+    
+    private void pokeUser() {
+    	mHandler.sendEmptyMessage(MSG_USERPOKE);
     }
 }

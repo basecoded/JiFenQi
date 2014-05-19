@@ -2,5 +2,6 @@
     <declare-styleable name="Number">
         <attr name="base" format="integer"/>
         <attr name="step" format="integer"/>
+        <attr name="can_negative" format="boolean"/>
     </declare-styleable>
 </resources>
