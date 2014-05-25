@@ -122,7 +122,8 @@ public class JiFenQiActivity extends Activity {
         mZhuangjiaSpinner = (Spinner)findViewById(R.id.zhuangjia_spinner);
         updateZhuangjia();
         
-        if(true) {
+        //TODO: test
+        if(false) {
             mPlayerName1.setText("p1");
             mPlayerName2.setText("p2");
             mPlayerName3.setText("p3");

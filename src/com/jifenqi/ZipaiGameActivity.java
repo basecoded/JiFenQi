@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.jifenqi.GameInfo.RoundInfo;
 import com.jifenqi.MyListView.OnMyLayoutChangeListener;
+import com.jifenqi.UserPokeLayout.onUserPokeListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -73,9 +74,10 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     		switch(msg.what) {
     		case MSG_USERPOKE:
     			setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
-    			if(!mHandler.hasMessages(MSG_DARK_BRIGHTNESS)) {
-    				mHandler.sendEmptyMessageDelayed(MSG_DARK_BRIGHTNESS, 20000);
+    			if(mHandler.hasMessages(MSG_DARK_BRIGHTNESS)) {
+    				mHandler.removeMessages(MSG_DARK_BRIGHTNESS);
     			}
+    			mHandler.sendEmptyMessageDelayed(MSG_DARK_BRIGHTNESS, 20000);
     			break;
     		case MSG_DARK_BRIGHTNESS:
     			setBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF);
@@ -355,12 +357,13 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 public void onClick(DialogInterface dialog, int whichButton) {
                     RecordRoundDialog ad = (RecordRoundDialog)dialog;
                     doRecordRound(ad);
+                    pokeUser();
                 }
             });
             text = getResources().getText(android.R.string.cancel);
             dialog.setButton(AlertDialog.BUTTON_NEGATIVE, text, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    
+                    pokeUser();
                 }
             });
             mRecordRoundView = view;
@@ -478,6 +481,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
     
     private void prepareRecordRoundDialog(Dialog dialog, Bundle args) {
+        keepBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
+        
         RecordRoundDialog rDialog = (RecordRoundDialog) dialog;
         RoundInfo ri = null;
         int type = args.getInt(Const.EXTRA_ROUND_DIALOG_TYPE);
@@ -595,7 +600,6 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	pokeUser();
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.newgame_continue:
@@ -691,6 +695,14 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     }
     
     private void initView() {
+    	UserPokeLayout upLayout = (UserPokeLayout)findViewById(R.id.root);
+    	upLayout.setOnUserPokeListener(new onUserPokeListener() {
+			@Override
+			public void onUserPoker() {
+				pokeUser();
+			}
+    		
+    	});
         mPlayersView = new View[mGameInfo.mPlayerNumber];
         TextView tv;
         
@@ -814,7 +826,6 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             cv.toggle();
             break;
         }
-        pokeUser();
     }
     
     private void updatePlayersView() {
@@ -942,8 +953,8 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                             }
                             if(huzi < 0) {
                                 //cha huzi
-                                shangxing = 0;
-                                xiaxing = 0;
+//                                shangxing = 0;
+//                                xiaxing = 0;
                                 isZimo = false;
                                 fangpaoPlayer = -1;
                             }
@@ -1121,7 +1132,6 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
             detailView.setVisibility(View.VISIBLE);
             updateRoundDetail(position, detailView);
         }
-        pokeUser();
     }
 
     private void updateRoundDetail(int position, View detailView) {
@@ -1194,7 +1204,6 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
 
     @Override
     public boolean onLongClick(View v) {
-    	pokeUser();
         int id = v.getId();
         switch(id) {
         case R.id.player1_info:
@@ -1255,13 +1264,13 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                 isZimo = false;
                 fangpaoPlayer = -1;
             }
-            if(huzi < 0) {
-                //cha huzi
-                shangxing = 0;
-                xiaxing = 0;
-                isZimo = false;
-                fangpaoPlayer = -1;
-            }
+            //cha huzi
+//            if(huzi < 0) {
+//                shangxing = 0;
+//                xiaxing = 0;
+//                isZimo = false;
+//                fangpaoPlayer = -1;
+//            }
             
             ri.zhuangjiaId = zhuangjiaId;
             ri.hupaiPlayerId = theHupaiPlayerId;
@@ -1342,5 +1351,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     
     private void pokeUser() {
     	mHandler.sendEmptyMessage(MSG_USERPOKE);
+    }
+    
+    private void keepBrightness(float brightness) {
+        setBrightness(brightness);
+        if(mHandler.hasMessages(MSG_DARK_BRIGHTNESS)) {
+            mHandler.removeMessages(MSG_DARK_BRIGHTNESS);
+        }
     }
 }

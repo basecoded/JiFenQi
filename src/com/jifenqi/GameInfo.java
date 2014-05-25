@@ -145,15 +145,46 @@ public class GameInfo {
         
         //cha hu zi
         if(ri.huzishu < 0) {
+            int shuxingPlayer = Utils.getShuxingPlayer(ri.zhuangjiaId);
+            if(mPlayerNumber != 4) {
+                shuxingPlayer = -1; //No shu xing.
+            }
+            
             int perPoint = Math.abs(ri.huzishu) / 5;
+            int absShangxing = Math.abs(ri.shangxing);
+            int absXiaxing = Math.abs(ri.xiaxing);
+            boolean hasFangpao = ri.fangpaoPlayerId != -1;
+            
             for(int i = 0; i < newRoundPoints.length; i++) {
                 if(i == ri.hupaiPlayerId) {
-                    int lostPoint = perPoint * (mPlayerNumber - 1);
+                    int lostPoint = (perPoint + absShangxing + absXiaxing) * 2;
+                    if(ri.zimo || ri.fangpaoPlayerId != -1) {
+                        lostPoint *= 2;
+                    }
                     newRoundPoints[i] = preRoundPoints[i] - lostPoint;
+                } else if(i == shuxingPlayer) {
+                    int getPoint = absXiaxing * 2;
+                    if(ri.zimo || ri.fangpaoPlayerId != -1) {
+                        getPoint *= 2;
+                    }
+                    newRoundPoints[i] = preRoundPoints[i] + getPoint;
+                } else if(i == ri.fangpaoPlayerId) {
+                    int getPoint = (perPoint + absShangxing) * 4;
+                    newRoundPoints[i] = preRoundPoints[i] + getPoint;
                 } else {
-                    newRoundPoints[i] = preRoundPoints[i] + perPoint;
+                    if(!hasFangpao) {
+                        int getPoint = perPoint + absShangxing;
+                        if(ri.zimo) {
+                            getPoint *=2;
+                        }
+                        newRoundPoints[i] = preRoundPoints[i] + getPoint;
+                    } else {
+                        newRoundPoints[i] = preRoundPoints[i];
+                    }
+                    
                 }
             }
+                
             return newRoundPoints;
         }
         
