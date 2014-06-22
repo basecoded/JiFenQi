@@ -25,6 +25,8 @@ public class Const {
     
     public static final String PREF_NAME = "jifenqi_zipai";
     public static final String KEY_RESUME = "zipai_resume";
+    public static final String KEY_PLAY_DAY = "zipai_play_day";
+    public static final String KEY_GAME_COUNT = "zipai_game_count";
     
     public static final int ROUND_DIALOG_TYPE_NEW = 1;
     public static final int ROUND_DIALOG_TYPE_UPDATE = 2;

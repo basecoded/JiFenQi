@@ -19,6 +19,7 @@ public class GameInfo {
     public String mStartTime;
     @Element(name="StartZhuangjiaId")
     public int mStartZhuangjiaId;
+    public String mPlayDay;
     
     @Element(name="PlayerNumber")
     public int mPlayerNumber;
@@ -46,6 +47,9 @@ public class GameInfo {
         Date now = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat(Const.DATE_FORMAT);
         mStartTime = sdf.format(now);
+        
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
+        mPlayDay = sdf2.format(now);
     }
     
     public int[] getRemainPoints() {

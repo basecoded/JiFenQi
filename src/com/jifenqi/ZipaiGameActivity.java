@@ -13,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
@@ -1115,9 +1116,19 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     private void saveGame() {
         //Don't save if there is only the start points
         if(mGameInfo.mRoundInfos.size() > 0) {
-            String filePath = Const.ZIPAI + "_" + mGameInfo.mStartTime + ".xml";
+            int gameCount = Utils.getIntSP(this, Const.KEY_GAME_COUNT);
+            
+            String playDay = Utils.getStringSP(this, Const.KEY_PLAY_DAY);
+            if(!mGameInfo.mPlayDay.equals(playDay)) {
+                Utils.putStringSP(this, Const.KEY_PLAY_DAY, mGameInfo.mPlayDay);
+                gameCount = 1;
+            }
+            
+            String filePath = Const.ZIPAI + "_" + mGameInfo.mPlayDay + "_" + gameCount + ".xml";
             PersistenceUtils.saveGame(mGameInfo, filePath);
             mGameSaved = true;
+            
+            Utils.putIntSP(this, Const.KEY_GAME_COUNT, gameCount+1);
         }
     }
     

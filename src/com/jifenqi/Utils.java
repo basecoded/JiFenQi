@@ -61,4 +61,28 @@ public class Utils {
         editor.putBoolean(key, value);
         editor.commit();
     }
+    
+    public static int getIntSP(Context context, String key) {
+        SharedPreferences settings =  context.getSharedPreferences(Const.PREF_NAME, 0);
+        return settings.getInt(key, 1);
+    }
+    
+    public static void putIntSP(Context context, String key, int value) {
+        SharedPreferences settings =  context.getSharedPreferences(Const.PREF_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(key, value);
+        editor.commit();
+    }
+    
+    public static String getStringSP(Context context, String key) {
+        SharedPreferences settings =  context.getSharedPreferences(Const.PREF_NAME, 0);
+        return settings.getString(key, "");
+    }
+    
+    public static void putStringSP(Context context, String key, String value) {
+        SharedPreferences settings =  context.getSharedPreferences(Const.PREF_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
 }
