@@ -262,11 +262,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             newGameContinue((Dialog)dialog);
+                            pokeUser();
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-    
+                            pokeUser();
                         }
                     })
                     .create();
@@ -338,12 +339,31 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
                                 View v = findViewById(viewId);
                                 TextView tv = (TextView)v.findViewById(R.id.player_name);
                                 tv.setText(name);
+                                
+                                int index = 0;
+                                switch(viewId) {
+                                case R.id.player1_info:
+                                    index = 0;
+                                    break;
+                                case R.id.player2_info:
+                                    index = 1;
+                                    break;
+                                case R.id.player3_info:
+                                    index = 2;
+                                    break;
+                                case R.id.player4_info:
+                                    index = 3;
+                                    break;
+                                }
+                                mGameInfo.mPlayerNames[index] = new String(name.toString());
                             }
+                            
+                            pokeUser();
                         }
                     })
                     .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-    
+                            pokeUser();
                         }
                     })
                     .create();
@@ -386,9 +406,12 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
     protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
         switch(id) {
         case NEWGAME_CONTINUE_ID:
+            keepBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
             prepareNewGameDialog(dialog);
             break;
         case CHANGE_PLAYER_NAME_ID:
+            keepBrightness(WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE);
+            
             int viewId = args.getInt(Const.EXTRA_PLAYERVIEW_ID);
             View v = findViewById(viewId);
             TextView tv = (TextView)v.findViewById(R.id.player_name);
