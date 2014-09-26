@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -774,52 +775,59 @@ public class ZipaiGameActivity extends Activity implements View.OnClickListener,
         //registerForContextMenu(mRoundList);
         if(!mIsHistory) {
             mRoundList.setOnCreateContextMenuListener(this);
+            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
             //init the last game
             saveLastGame();
         }
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ) {
-            if(!mIsHistory) {
-                mRoundList.setOnMyLayoutChangeListener(new OnMyLayoutChangeListener() {
-
-                    @Override
-                    public void onLayoutChange(int left, int top, int right,
-                            int bottom) {
-                        RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
-                        if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
-                            //mRoundList.smoothScrollToPosition(a.getCount());
-                            //mRoundList.setSelection(a.getCount() - 1);
-                            mRoundList.setStackFromBottom(true);
-                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                        } else {
-                            mRoundList.setStackFromBottom(false);
-                        }
-                    }
-                });
-//                mRoundList.setStackFromBottom(true);
-//                mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-            }
-        } else {
-            mRoundList.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right,
-                        int bottom, int oldLeft, int oldTop, int oldRight,
-                        int oldBottom) {
-                    // TODO Auto-generated method stub
-                    if(!mIsHistory) {
-                        RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
-                        if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
-                            //mRoundList.smoothScrollToPosition(a.getCount());
-                            //mRoundList.setSelection(a.getCount() - 1);
-                            mRoundList.setStackFromBottom(true);
-                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-                        } else {
-                            mRoundList.setStackFromBottom(false);
-                        }
-                    }
-                }
-                
-            });
-        }
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ) {
+//            if(!mIsHistory) {
+//                mRoundList.setOnMyLayoutChangeListener(new OnMyLayoutChangeListener() {
+//
+//                    @Override
+//                    public void onLayoutChange(int left, int top, int right,
+//                            int bottom) {
+//                        RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
+//                        if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
+//                            //mRoundList.smoothScrollToPosition(a.getCount());
+//                            //mRoundList.setSelection(a.getCount() - 1);
+//                            //mRoundList.setStackFromBottom(true);
+//                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+//                        } else {
+//                            //mRoundList.setStackFromBottom(false);
+//                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
+//                        }
+//                    }
+//                });
+////                mRoundList.setStackFromBottom(true);
+////                mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+//            }
+//        } else {
+//            mRoundList.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+//                @Override
+//                public void onLayoutChange(View v, int left, int top, int right,
+//                        int bottom, int oldLeft, int oldTop, int oldRight,
+//                        int oldBottom) {
+//                    // TODO Auto-generated method stub
+//                    if(!mIsHistory) {
+//                        RoundAdapter a = (RoundAdapter)mRoundList.getAdapter();
+//                        Log.d("zipai", "getLastVisiblePosition: " + mRoundList.getLastVisiblePosition());
+//                        Log.d("zipai", "count: " + a.getCount());
+//                        if(mRoundList.getLastVisiblePosition() < (a.getCount() - 1)) {
+//                            //mRoundList.smoothScrollToPosition(a.getCount());
+//                            //mRoundList.setSelection(a.getCount() - 1);
+//                            //mRoundList.setStackFromBottom(true);
+//                            Log.d("zipai", "TRANSCRIPT_MODE_ALWAYS_SCROLL ");
+//                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+//                        } else {
+//                            //mRoundList.setStackFromBottom(false);
+//                            Log.d("zipai", "TRANSCRIPT_MODE_DISABLED ");
+//                            mRoundList.setTranscriptMode(ListView.TRANSCRIPT_MODE_DISABLED);
+//                        }
+//                    }
+//                }
+//                
+//            });
+//        }
         
         mRoundList.setOnItemClickListener(this);
         
